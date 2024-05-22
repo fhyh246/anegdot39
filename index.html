@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Расскажи анекдот</title>
+</head>
+<body>
+    <h1>Нажмите кнопку, чтобы услышать анекдот</h1>
+    <button onclick="showJoke()">Расскажи анекдот</button>
+    <p id="joke"></p>
+
+    <script>
+        function showJoke() {
+            // Здесь можно добавить код для загрузки анекдота с помощью API
+            document.getElementById("joke").innerHTML = "Здесь будет ваш анекдот";
+        }
+    </script>
+</body>
+</html>
