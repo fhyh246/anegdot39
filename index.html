@@ -83,6 +83,28 @@
             text-align: center;
             margin-top: 20px;
         }
+        .bank-notification {
+            display: none;
+            position: fixed;
+            z-index: 2;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            animation: slideIn 0.5s forwards, slideOut 0.5s forwards 4s;
+        }
+        @keyframes slideIn {
+            from { top: -100px; opacity: 0; }
+            to { top: 50px; opacity: 1; }
+        }
+        @keyframes slideOut {
+            from { top: 50px; opacity: 1; }
+            to { top: -100px; opacity: 0; }
+        }
     </style>
 </head>
 <body>
@@ -95,7 +117,7 @@
             <h2 id="courseTitle">Оплата курса</h2>
             <p>Введите номер карты для оплаты 2 000 000 €</p>
             <input type="text" class="modal-input" placeholder="Номер карты">
-            <button class="button" style="width: 100%;" onclick="showMessage()">Оплатить</button>
+            <button class="button" style="width: 100%;" onclick="showBankNotification()">Оплатить</button>
         </div>
     </div>
 
@@ -109,6 +131,15 @@
         <p>Мы живем в мире, где успех – это не просто цель, это образ жизни. Успех не приходит случайно; его нужно планировать, строить и усердно добиваться. И это именно то, что мы собираемся сделать вместе с вами на наших курсах. Добро пожаловать на курсы успешного успеха! Давайте вместе начнем этот захватывающий путь к вашему величию и несравненному успеху.</p>
     </div>
 
+    <div id="importantMessage" class="message">
+        <h2>Добро пожаловать на курс важной кнопки!</h2>
+        <p>Этот курс создан специально для тех, кто стремится к величию и успеху. Здесь вы найдете все необходимые инструменты и знания для достижения ваших самых амбициозных целей. Верьте в себя и свои силы, и успех обязательно придет!</p>
+    </div>
+
+    <div id="bankNotification" class="bank-notification">
+        У вас списывается 2 000 000 €
+    </div>
+
     <script>
         function showModal(courseName) {
             document.getElementById('courseTitle').innerText = 'Оплата курса: ' + courseName;
@@ -119,14 +150,11 @@
             document.getElementById('paymentModal').style.display = 'none';
         }
 
-        function showMessage() {
-            closeModal();
-            var courseTitle = document.getElementById('courseTitle').innerText;
-            if (courseTitle.includes('Медитации')) {
-                document.getElementById('meditationMessage').style.display = 'block';
-            } else {
-                document.getElementById('successMessage').style.display = 'block';
-            }
+        function showBankNotification() {
+            document.getElementById('bankNotification').style.display = 'block';
+            setTimeout(function() {
+                document.getElementById('bankNotification').style.display = 'none';
+            }, 5000); // скрываем уведомление через 5 секунд
         }
     </script>
 </body>
