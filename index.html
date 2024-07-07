@@ -73,6 +73,16 @@
             border-radius: 5px;
             font-size: 1.1em;
         }
+        .message {
+            display: none;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #fefefe;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            text-align: center;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -85,8 +95,18 @@
             <h2 id="courseTitle">Оплата курса</h2>
             <p>Введите номер карты для оплаты 2 000 000 €</p>
             <input type="text" class="modal-input" placeholder="Номер карты">
-            <button class="button" style="width: 100%;">Оплатить</button>
+            <button class="button" style="width: 100%;" onclick="showMessage()">Оплатить</button>
         </div>
+    </div>
+
+    <div id="meditationMessage" class="message">
+        <h2>Добро пожаловать на курсы медитации!</h2>
+        <p>Медитация – это путь к осознанности и внутренней гармонии. Она позволяет нам видеть мир с ясностью и понимать, что настоящая сила и счастье находятся внутри нас. Вы научитесь слушать свое тело, чувствовать свои эмоции и реагировать на жизненные ситуации с мудростью и спокойствием. Добро пожаловать на курсы медитации! Давайте вместе откроем для себя мир внутреннего спокойствия, гармонии и счастья.</p>
+    </div>
+
+    <div id="successMessage" class="message">
+        <h2>Добро пожаловать на курсы успешного успеха!</h2>
+        <p>Мы живем в мире, где успех – это не просто цель, это образ жизни. Успех не приходит случайно; его нужно планировать, строить и усердно добиваться. И это именно то, что мы собираемся сделать вместе с вами на наших курсах. Добро пожаловать на курсы успешного успеха! Давайте вместе начнем этот захватывающий путь к вашему величию и несравненному успеху.</p>
     </div>
 
     <script>
@@ -97,6 +117,16 @@
         
         function closeModal() {
             document.getElementById('paymentModal').style.display = 'none';
+        }
+
+        function showMessage() {
+            closeModal();
+            var courseTitle = document.getElementById('courseTitle').innerText;
+            if (courseTitle.includes('Медитации')) {
+                document.getElementById('meditationMessage').style.display = 'block';
+            } else {
+                document.getElementById('successMessage').style.display = 'block';
+            }
         }
     </script>
 </body>
