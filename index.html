@@ -3,159 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Курсы</title>
+    <title>Угадай Автомобиль</title>
     <style>
         body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            padding: 20px;
+        }
+        .car-image {
+            max-width: 100%;
+            height: auto;
+        }
+        .options {
             display: flex;
             justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background: linear-gradient(120deg, #0044cc, #800000);
-            font-family: Arial, sans-serif;
-        }
-        .button {
-            padding: 20px 40px;
-            margin: 15px;
-            border: none;
-            border-radius: 10px;
-            background-color: #ffffff;
-            color: #800000;
-            font-size: 1.5em;
-            cursor: pointer;
-            transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        .button:hover {
-            background-color: #800000;
-            color: #ffffff;
-            transform: scale(1.1);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background-color: #fefefe;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            width: 80%;
-            max-width: 400px;
-            text-align: center;
-        }
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .modal-input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 1.1em;
-        }
-        .message {
-            display: none;
-            padding: 20px;
-            border-radius: 10px;
-            background-color: #fefefe;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            max-width: 600px;
-            text-align: center;
             margin-top: 20px;
         }
-        .bank-notification {
-            display: none;
-            position: fixed;
-            z-index: 2;
-            top: 50px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #4CAF50;
+        .option {
+            padding: 10px 20px;
+            margin: 5px;
+            background-color: #007BFF;
             color: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            animation: slideIn 0.5s forwards, slideOut 0.5s forwards 4s;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
         }
-        @keyframes slideIn {
-            from { top: -100px; opacity: 0; }
-            to { top: 50px; opacity: 1; }
-        }
-        @keyframes slideOut {
-            from { top: 50px; opacity: 1; }
-            to { top: -100px; opacity: 0; }
+        .option:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
-    <button class="button" onclick="showModal('Курсы Медитации')">Курсы Медитации</button>
-    <button class="button" onclick="showModal('Курсы Успешного Успеха')">Курсы Успешного Успеха</button>
-
-    <div id="paymentModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h2 id="courseTitle">Оплата курса</h2>
-            <p>Введите номер карты для оплаты 2 000 000 €</p>
-            <input type="text" class="modal-input" placeholder="Номер карты">
-            <button class="button" style="width: 100%;" onclick="showBankNotification()">Оплатить</button>
+    <div class="container">
+        <h1>Угадай Автомобиль</h1>
+        <img id="carImage" class="car-image" src="" alt="Автомобиль">
+        <div class="options">
+            <button class="option" onclick="checkAnswer(0)">Option 1</button>
+            <button class="option" onclick="checkAnswer(1)">Option 2</button>
+            <button class="option" onclick="checkAnswer(2)">Option 3</button>
+            <button class="option" onclick="checkAnswer(3)">Option 4</button>
         </div>
+        <div id="result"></div>
     </div>
 
-    <div id="meditationMessage" class="message">
-        <h2>Добро пожаловать на курсы медитации!</h2>
-        <p>Медитация – это путь к осознанности и внутренней гармонии. Она позволяет нам видеть мир с ясностью и понимать, что настоящая сила и счастье находятся внутри нас. Вы научитесь слушать свое тело, чувствовать свои эмоции и реагировать на жизненные ситуации с мудростью и спокойствием. Добро пожаловать на курсы медитации! Давайте вместе откроем для себя мир внутреннего спокойствия, гармонии и счастья.</p>
-    </div>
-
-    <div id="successMessage" class="message">
-        <h2>Добро пожаловать на курсы успешного успеха!</h2>
-        <p>Мы живем в мире, где успех – это не просто цель, это образ жизни. Успех не приходит случайно; его нужно планировать, строить и усердно добиваться. И это именно то, что мы собираемся сделать вместе с вами на наших курсах. Добро пожаловать на курсы успешного успеха! Давайте вместе начнем этот захватывающий путь к вашему величию и несравненному успеху.</p>
-    </div>
-
-    <div id="importantMessage" class="message">
-        <h2>Добро пожаловать на курс важной кнопки!</h2>
-        <p>Этот курс создан специально для тех, кто стремится к величию и успеху. Здесь вы найдете все необходимые инструменты и знания для достижения ваших самых амбициозных целей. Верьте в себя и свои силы, и успех обязательно придет!</p>
-    </div>
-
-    <div id="bankNotification" class="bank-notification">
-        У вас списывается 2 000 000 €
-    </div>
-
-    <script>
-        function showModal(courseName) {
-            document.getElementById('courseTitle').innerText = 'Оплата курса: ' + courseName;
-            document.getElementById('paymentModal').style.display = 'flex';
-        }
-        
-        function closeModal() {
-            document.getElementById('paymentModal').style.display = 'none';
-        }
-
-        function showBankNotification() {
-            document.getElementById('bankNotification').style.display = 'block';
-            setTimeout(function() {
-                document.getElementById('bankNotification').style.display = 'none';
-            }, 5000); // скрываем уведомление через 5 секунд
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
