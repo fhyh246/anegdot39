@@ -1,56 +1,29 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Угадай Автомобиль</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
+    <title>Shift Information</title>
+    <script>
+        async function fetchShiftData() {
+            const response = await fetch('shifts.json');
+            const data = await response.json();
+            return data;
         }
-        .container {
-            padding: 20px;
+
+        async function showShift(storeId) {
+            const data = await fetchShiftData();
+            const employee = data[storeId];
+            const displayArea = document.getElementById('displayArea');
+            displayArea.textContent = employee ? `Сегодня на смене: ${employee}` : 'Нет данных для этого магазина';
         }
-        .car-image {
-            max-width: 100%;
-            height: auto;
-        }
-        .options {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-        }
-        .option {
-            padding: 10px 20px;
-            margin: 5px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        .option:hover {
-            background-color: #0056b3;
-        }
-    </style>
+    </script>
 </head>
 <body>
-    <div class="container">
-        <h1>Угадай Автомобиль</h1>
-        <img id="carImage" class="car-image" src="" alt="Автомобиль">
-        <div class="options">
-            <button class="option" onclick="checkAnswer(0)">Option 1</button>
-            <button class="option" onclick="checkAnswer(1)">Option 2</button>
-            <button class="option" onclick="checkAnswer(2)">Option 3</button>
-            <button class="option" onclick="checkAnswer(3)">Option 4</button>
-        </div>
-        <div id="result"></div>
-    </div>
-
-    <script src="script.js"></script>
+    <h1>Информация о сменах</h1>
+    <button onclick="showShift('store1')">Магазин 1</button>
+    <button onclick="showShift('store2')">Магазин 2</button>
+    <button onclick="showShift('store3')">Магазин 3</button>
+    <div id="displayArea" style="margin-top: 20px; font-size: 18px;"></div>
 </body>
 </html>
