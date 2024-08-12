@@ -10,6 +10,9 @@ function distribute() {
     
     const lines = content.split('\n').map(line => line.trim()).filter(line => line !== '');
     
+    // Отображаем исходный список
+    document.getElementById('original').innerHTML = `<ul>${lines.map(line => `<li>${line}</li>`).join('')}</ul>`;
+    
     const cashItems = [];
     const cardItems = [];
     
