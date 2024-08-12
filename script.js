@@ -1,33 +1,52 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Распределение товаров</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-        }
-        #result {
-            margin-top: 20px;
-        }
-        textarea {
-            width: 100%;
-            height: 150px;
-            margin-bottom: 10px;
-        }
-    </style>
-</head>
-<body>
-    <h1>Распределение товаров по наличному и безналичному расчету</h1>
-    <button onclick="document.getElementById('fileInput').click()">Загрузить список</button>
-    <input type="file" id="fileInput" style="display: none;" onchange="loadFile(event)">
-    <textarea id="fileContent" placeholder="Содержимое файла будет здесь..."></textarea>
-    <button onclick="distribute()">Распределить</button>
+function distribute() {
+    const content = document.getElementById('inputList').value;
+    const cashTarget = parseInt(document.getElementById('cashAmount').value, 10);
+    const cardTarget = parseInt(document.getElementById('cardAmount').value, 10);
     
-    <div id="result"></div>
+    if (isNaN(cashTarget) || isNaN(cardTarget)) {
+        alert("Пожалуйста, введите корректные суммы для наличных и безналичных расчетов.");
+        return;
+    }
     
-    <script src="script.js"></script>
-</body>
-</html>
+    const lines = content.split('\n').map(line => line.trim()).filter(line => line !== '');
+    
+    const cashItems = [];
+    const cardItems = [];
+    
+    let cashSum = 0;
+    let cardSum = 0;
+    
+    lines.forEach(line => {
+        const match = line.match(/–\s*(\d+)₽/);
+        if (match) {
+            const price = parseInt(match[1], 10);
+            
+            if (cashSum + price <= cashTarget) {
+                cashItems.push(line);
+                cashSum += price;
+            } else if (cardSum + price <= cardTarget) {
+                cardItems.push(line);
+                cardSum += price;
+            } else {
+                alert("Не хватает суммы для точного распределения.");
+                return;
+            }
+        }
+    });
+    
+    const result = `
+        <h2>Наличные</h2>
+        <ul>${cashItems.map(item => `<li>${item}</li>`).join('')}</ul>
+        <p>Итоговая сумма наличных: ${cashSum}₽</p>
+        
+        <h2>Безнал</h2>
+        <ul>${cardItems.map(item => `<li>${item}</li>`).join('')}</ul>
+        <p>Итоговая сумма безнала: ${cardSum}₽</p>
+    `;
+    
+    if (Math.abs(cashSum - cashTarget) > 0.01 || Math.abs(cardSum - cardTarget) > 0.01) {
+        result += `<p style="color: red;">Предупреждение: Некоторая сумма не распределена точно.</p>`;
+    }
+    
+    document.getElementById('result').innerHTML = result;
+}
