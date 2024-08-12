@@ -10,9 +10,6 @@ function distribute() {
     
     const lines = content.split('\n').map(line => line.trim()).filter(line => line !== '');
     
-    // Отображаем исходный список
-    document.getElementById('original').innerHTML = `<ul>${lines.map(line => `<li>${line}</li>`).join('')}</ul>`;
-    
     const cashItems = [];
     const cardItems = [];
     
@@ -37,19 +34,12 @@ function distribute() {
         }
     });
     
-    const result = `
-        <h2>Наличные</h2>
-        <ul>${cashItems.map(item => `<li>${item}</li>`).join('')}</ul>
-        <p>Итоговая сумма наличных: ${cashSum}₽</p>
-        
-        <h2>Безнал</h2>
-        <ul>${cardItems.map(item => `<li>${item}</li>`).join('')}</ul>
-        <p>Итоговая сумма безнала: ${cardSum}₽</p>
-    `;
+    let resultText = `Наличные:\n${cashItems.join('\n')}\n\nИтоговая сумма наличных: ${cashSum}₽\n\n`;
+    resultText += `Безнал:\n${cardItems.join('\n')}\n\nИтоговая сумма безнала: ${cardSum}₽\n`;
     
     if (Math.abs(cashSum - cashTarget) > 0.01 || Math.abs(cardSum - cardTarget) > 0.01) {
-        result += `<p style="color: red;">Предупреждение: Некоторая сумма не распределена точно.</p>`;
+        resultText += `\nПредупреждение: Некоторая сумма не распределена точно.`;
     }
     
-    document.getElementById('result').innerHTML = result;
+    document.getElementById('result').value = resultText;
 }
