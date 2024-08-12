@@ -8,41 +8,50 @@
         body {
             font-family: Arial, sans-serif;
             padding: 20px;
+            max-width: 600px;
+            margin: auto;
         }
         textarea, input[type="text"] {
             width: 100%;
             margin-bottom: 10px;
+            padding: 10px;
+            font-size: 14px;
         }
         textarea {
-            height: 150px;
+            height: 120px;
         }
         button {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
             margin-top: 10px;
         }
-        #result, #original {
+        #result {
             margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            white-space: pre-wrap;
+            overflow-wrap: break-word;
         }
     </style>
 </head>
 <body>
-    <h1>Распределение товаров по наличному и безналичному расчету</h1>
+    <h1 style="font-size: 18px;">Распределение товаров по наличному и безналичному расчету</h1>
     
-    <label for="inputList">Исходный список товаров:</label>
+    <label for="inputList" style="font-size: 14px;">Список товаров:</label>
     <textarea id="inputList" placeholder="Вставьте сюда список товаров..."></textarea>
     
-    <label for="cashAmount">Сумма для наличных (₽):</label>
+    <label for="cashAmount" style="font-size: 14px;">Сумма для наличных (₽):</label>
     <input type="text" id="cashAmount">
     
-    <label for="cardAmount">Сумма для безналичных расчетов (₽):</label>
+    <label for="cardAmount" style="font-size: 14px;">Сумма для безналичных расчетов (₽):</label>
     <input type="text" id="cardAmount">
     
     <button onclick="distribute()">Сформировать</button>
     
-    <h2>Исходный список</h2>
-    <div id="original"></div>
-    
-    <h2>Результат распределения</h2>
-    <div id="result"></div>
+    <h2 style="font-size: 16px;">Результат распределения</h2>
+    <textarea id="result" readonly></textarea>
     
     <script src="script.js"></script>
 </body>
