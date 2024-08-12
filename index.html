@@ -19,7 +19,7 @@
         button {
             margin-top: 10px;
         }
-        #result {
+        #result, #original {
             margin-top: 20px;
         }
     </style>
@@ -27,6 +27,7 @@
 <body>
     <h1>Распределение товаров по наличному и безналичному расчету</h1>
     
+    <label for="inputList">Исходный список товаров:</label>
     <textarea id="inputList" placeholder="Вставьте сюда список товаров..."></textarea>
     
     <label for="cashAmount">Сумма для наличных (₽):</label>
@@ -37,6 +38,10 @@
     
     <button onclick="distribute()">Сформировать</button>
     
+    <h2>Исходный список</h2>
+    <div id="original"></div>
+    
+    <h2>Результат распределения</h2>
     <div id="result"></div>
     
     <script src="script.js"></script>
