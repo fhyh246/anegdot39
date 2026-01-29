@@ -3,194 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HACKER TYCOON: BALANCED</title>
+    <title>HACKER: HARDCORE ECONOMY</title>
     <style>
         :root { --n: #00ff41; --bg: #050505; --g: #ffd700; --r: #ff3131; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg); color: var(--n); font-family: 'Consolas', monospace; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
-        .header { padding: 8px; border-bottom: 2px solid var(--n); display: flex; justify-content: space-between; background: #000; font-size: 10px; opacity: 0.8; }
-        .stats { display: grid; grid-template-columns: 1fr 1fr; padding: 12px; background: rgba(0,255,65,0.03); border-bottom: 1px solid var(--n); }
-        .val { font-size: 18px; font-weight: bold; color: var(--n); text-shadow: 0 0 5px var(--n); }
-        .rub { color: var(--g); text-shadow: 0 0 5px var(--g); }
+        .header { padding: 5px 10px; border-bottom: 1px solid var(--n); display: flex; justify-content: space-between; font-size: 10px; background: #000; }
+        .stats { display: grid; grid-template-columns: 1fr 1fr; padding: 15px; background: #080808; border-bottom: 2px solid var(--n); }
+        .val { font-size: 20px; font-weight: bold; color: var(--n); }
+        .rub { color: var(--g); }
 
-        /* Система Доната */
-        .donate-bar { background: #111; padding: 8px; border-bottom: 1px solid var(--g); display: flex; justify-content: space-between; align-items: center; font-size: 11px; }
-        .d-btn { background: var(--g); color: #000; border: none; padding: 4px 8px; font-weight: bold; cursor: pointer; border-radius: 2px; }
+        /* Донат */
+        .donate-area { background: #111; padding: 10px; border-bottom: 1px solid var(--g); display: flex; justify-content: space-between; align-items: center; }
+        .d-btn { background: var(--g); color: #000; border: none; padding: 6px 12px; font-weight: bold; cursor: pointer; border-radius: 2px; font-size: 11px; }
 
         .main { flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
         #btn { 
-            width: 130px; height: 130px; border-radius: 50%; border: 3px solid var(--n); 
-            background: none; color: var(--n); font-size: 18px; font-weight: bold; 
-            cursor: pointer; box-shadow: 0 0 10px var(--n); transition: 0.1s;
+            width: 140px; height: 140px; border-radius: 50%; border: 5px solid var(--n); 
+            background: none; color: var(--n); font-size: 20px; font-weight: bold; 
+            cursor: pointer; box-shadow: 0 0 15px var(--n); transition: 0.1s;
         }
-        #btn:active { transform: scale(0.95); box-shadow: 0 0 30px var(--n); }
-        #btn.throttle { border-color: var(--r); color: var(--r); box-shadow: 0 0 10px var(--r); }
+        #btn:active { transform: scale(0.9); box-shadow: 0 0 40px var(--n); }
+        #btn.disabled { border-color: #333; color: #333; box-shadow: none; cursor: not-allowed; }
 
-        .temp-cont { width: 220px; margin-top: 20px; text-align: center; }
-        .t-bg { width: 100%; height: 8px; background: #111; border: 1px solid var(--n); border-radius: 4px; overflow: hidden; margin-top: 5px; }
-        #t-fill { width: 0%; height: 100%; background: var(--n); transition: 0.2s; }
+        .temp-ui { width: 200px; margin-top: 20px; text-align: center; }
+        .t-bar { width: 100%; height: 10px; background: #111; border: 1px solid var(--n); margin-top: 5px; }
+        #t-fill { width: 0%; height: 100%; background: var(--n); transition: 0.4s; }
 
-        .shop { height: 42vh; background: #000; border-top: 2px solid var(--n); overflow-y: auto; }
-        .card { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #111; }
-        .c-info h4 { margin: 0; font-size: 13px; color: var(--g); }
-        .c-info p { margin: 3px 0 0; font-size: 10px; opacity: 0.6; }
-        .buy { background: var(--n); color: #000; border: none; padding: 8px 12px; font-weight: bold; cursor: pointer; border-radius: 2px; }
-        .buy:disabled { background: #111; color: #333; cursor: not-allowed; }
+        .shop { height: 40vh; background: #000; border-top: 2px solid var(--n); overflow-y: auto; }
+        .item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #111; }
+        .item h4 { margin: 0; font-size: 13px; color: var(--g); }
+        .item p { margin: 2px 0 0; font-size: 10px; opacity: 0.6; }
+        .buy { background: var(--n); color: #000; border: none; padding: 8px 15px; font-weight: bold; cursor: pointer; }
+        .buy:disabled { background: #222; color: #444; }
 
-        #d-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 100; padding: 20px; border: 4px solid var(--g); margin: 20px; border-radius: 10px; }
-        .float { position: absolute; pointer-events: none; animation: float 0.8s forwards; font-weight: bold; color: var(--n); }
-        @keyframes float { to { transform: translateY(-80px); opacity: 0; } }
+        #modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 100; border: 2px solid var(--g); margin: 20px; text-align: center; }
     </style>
 </head>
 <body>
 
-<div id="d-modal">
-    <h2 style="color:var(--g)">ХАКЕРСКИЙ БУСТ</h2>
-    <p style="font-size:12px; color:#fff">Перевод на карту (поддержка разработчика):</p>
-    <div style="background:#222; padding:15px; font-size:16px; color:var(--g); border:1px dashed var(--g)">2202 2036 4104 0342</div>
-    <p style="font-size:11px; opacity:0.7">Награда: VIP статус и x50 к прибыли</p>
-    <button class="d-btn" style="width:100%; padding:15px; margin-top:10px" onclick="checkD()">ПРОВЕРИТЬ ПЕРЕВОД</button>
-    <button onclick="closeD()" style="background:none; border:none; color:var(--r); margin-top:20px; text-decoration:underline">ВЕРНУТЬСЯ</button>
+<div id="modal">
+    <h2 style="color:var(--g)">DONATE TERMINAL</h2>
+    <p>Для активации VIP (x10) переведи на карту:</p>
+    <div style="background:#222; padding:15px; color:var(--g); font-size:16px; margin:15px 0">2202 2036 4104 0342</div>
+    <button class="d-btn" style="width:200px" onclick="checkPay()">ПРОВЕРИТЬ ОПЛАТУ</button>
+    <button onclick="document.getElementById('modal').style.display='none'" style="background:none; border:none; color:var(--r); margin-top:20px">ЗАКРЫТЬ</button>
 </div>
 
 <div class="header">
-    <span>LOG: SYSTEM_INITIALIZED</span>
-    <span>FPS: 60</span>
+    <span>ВЕРСИЯ: 4.0 (HARDCORE)</span>
+    <span id="income-tag">ДОХОД: 0 ₽/с</span>
 </div>
 
-<div class="donate-bar">
-    <span>DONATE STATUS: <b id="vip-status">USER</b></span>
-    <button class="d-btn" onclick="openD()">ПОПОЛНИТЬ</button>
+<div class="donate-area">
+    <span id="vip-tag" style="font-size:10px">STATUS: GUEST</span>
+    <button class="d-btn" onclick="document.getElementById('modal').style.display='flex'">VIP БУСТ</button>
 </div>
 
 <div class="stats">
     <div><small>BITCOIN</small><br><span class="val" id="btc">0.00000</span></div>
-    <div style="text-align:right;"><small>RUB BALANCE</small><br><span class="val rub" id="rub">150</span></div>
+    <div style="text-align:right;"><small>РУБЛИ</small><br><span class="val rub" id="rub">0</span></div>
 </div>
 
 <div class="main">
-    <button id="btn" onclick="hk(event)">ВЗЛОМ</button>
-    <div class="temp-cont">
-        <small style="font-size:10px">CPU CORE TEMP: <span id="tv">30</span>°C</small>
-        <div class="t-bg"><div id="t-fill"></div></div>
-        <button onclick="ex()" style="margin-top:15px; background:none; border:1px solid var(--g); color:var(--g); padding:6px 20px; font-size:11px; font-weight:bold; cursor:pointer">ОБМЕН (КОМИССИЯ 5%)</button>
+    <button id="btn" onclick="hk()">ВЗЛОМ</button>
+    <div class="temp-ui">
+        <small>CPU TEMP: <span id="tv">30</span>°C</small>
+        <div class="t-bar"><div id="t-fill"></div></div>
+        <button onclick="ex()" style="margin-top:15px; background:var(--g); border:none; padding:8px 20px; font-weight:bold; cursor:pointer; width:100%">ОБМЕН BTC (КУРС ПЛАВАЕТ)</button>
     </div>
 </div>
 
-<div class="shop" id="sh"></div>
+<div class="shop" id="shop"></div>
 
 <script>
-    let s = { btc: 0, rub: 150, t: 30, cp: 0.00015, inc: 0, cool: 0.45, mult: 1 };
+    let s = { btc: 0, rub: 100, t: 30, cp: 0.00002, inc: 0, cool: 0.3, mult: 1, vip: 1 };
 
-    const upgrades = [
-        { n: "Термопаста (Дешман)", cost: 800, fn: () => s.cool += 0.25, d: "Охлаждение +0.25" },
-        { n: "Видяха GT 730", cost: 2500, fn: () => s.cp += 0.0003, d: "Прибыль +0.0003" },
-        { n: "Блок питания 450W", cost: 7000, fn: () => s.mult *= 1.2, d: "Множитель x1.2" },
-        { n: "Майнинг ферма Б/У", cost: 20000, fn: () => s.inc += 450, d: "Пассив +450₽/с" },
-        { n: "Водянка (Custom)", cost: 65000, fn: () => s.cool += 1.8, d: "Охлаждение +1.8" },
-        { n: "ASIC Майнер V1", cost: 150000, fn: () => s.inc += 2800, d: "Пассив +2800₽/с" },
-        { n: "Квантовый Чип", cost: 1000000, fn: () => s.cp += 0.05, d: "Прибыль +0.05" }
+    const items = [
+        { n: "Термопаста", cost: 500, fn: () => s.cool += 0.2, d: "+0.2 Охлад" },
+        { n: "Старая Видяха", cost: 1500, fn: () => s.cp += 0.00005, d: "+0.00005 BTC" },
+        { n: "Доп. Вентилятор", cost: 5000, fn: () => s.cool += 0.6, d: "+0.6 Охлад" },
+        { n: "Майнер S7", cost: 15000, fn: () => s.inc += 150, d: "+150 ₽/с" },
+        { n: "ASIC Майнер", cost: 80000, fn: () => s.inc += 900, d: "+900 ₽/с" },
+        { n: "Серверная Стойка", cost: 450000, fn: () => s.inc += 6000, d: "+6000 ₽/с" },
+        { n: "Квантовое ядро", cost: 2500000, fn: () => s.cp += 0.005, d: "+0.005 BTC" }
     ];
 
-    function hk(e) {
+    function hk() {
         if (s.t >= 100) return;
-        
-        let power = s.cp * s.mult;
-        if (s.t > 85) power *= 0.5; // Троттлинг
-
-        s.btc += power;
-        s.t = Math.min(100, s.t + 1.5);
-        
-        const f = document.createElement('div');
-        f.className = 'float';
-        f.innerText = `+${power.toFixed(5)}`;
-        f.style.left = e.clientX + 'px';
-        f.style.top = e.clientY + 'px';
-        document.body.appendChild(f);
-        setTimeout(() => f.remove(), 800);
-
-        if (navigator.vibrate) navigator.vibrate(10);
+        s.btc += s.cp * s.mult * s.vip;
+        s.t = Math.min(100, s.t + 1.8);
         u();
     }
 
     function ex() {
-        if (s.btc < 0.0001) return alert("Минимальный обмен: 0.0001 BTC");
-        let rate = 8500000 + (Math.random() * 2000000);
-        let total = (s.btc * rate) * 0.95; // 5% комиссия
-        s.rub += total;
+        if (s.btc < 0.0001) return alert("Минимум 0.0001 BTC!");
+        let rate = 4000000 + (Math.random() * 3000000); // Курс стал ниже
+        s.rub += s.btc * rate;
         s.btc = 0;
-        u();
-        save();
+        u(); rs();
     }
 
     function buy(i) {
-        if (s.rub >= upgrades[i].cost) {
-            s.rub -= upgrades[i].cost;
-            upgrades[i].fn();
-            upgrades[i].cost = Math.floor(upgrades[i].cost * 1.85); // Усложнение цены
-            rs(); u(); save();
+        if (s.rub >= items[i].cost) {
+            s.rub -= items[i].cost;
+            items[i].fn();
+            items[i].cost = Math.floor(items[i].cost * 2.2); // Цена растет ОЧЕНЬ быстро
+            u(); rs();
         }
     }
 
-    function openD() { document.getElementById('d-modal').style.display = 'flex'; }
-    function closeD() { document.getElementById('d-modal').style.display = 'none'; }
-    function checkD() {
-        alert("Транзакция в обработке... Как только деньги поступят на 2202...0342, VIP активируется!");
-        s.mult *= 50; 
-        document.getElementById('vip-status').innerText = "VIP (x50)";
-        document.getElementById('vip-status').style.color = "var(--g)";
-        closeD();
+    function checkPay() {
+        alert("Проверка... VIP активирован (x10)!");
+        s.vip = 10;
+        document.getElementById('vip-tag').innerText = "STATUS: VIP (x10)";
+        document.getElementById('vip-tag').style.color = "var(--g)";
+        document.getElementById('modal').style.display = 'none';
+        u();
     }
 
     function u() {
         document.getElementById('btc').innerText = s.btc.toFixed(5);
         document.getElementById('rub').innerText = Math.floor(s.rub).toLocaleString() + " ₽";
         document.getElementById('tv').innerText = Math.floor(s.t);
-        let fill = document.getElementById('t-fill');
-        fill.style.width = s.t + "%";
+        document.getElementById('t-fill').style.width = s.t + "%";
+        document.getElementById('income-tag').innerText = `ДОХОД: ${s.inc} ₽/с`;
         
-        const btn = document.getElementById('btn');
-        if (s.t > 85) {
-            fill.style.background = "var(--r)";
-            btn.classList.add('throttle');
-            btn.innerText = "OVERHEAT";
-        } else {
-            fill.style.background = "var(--n)";
-            btn.classList.remove('throttle');
-            btn.innerText = "ВЗЛОМ";
-        }
+        const b = document.getElementById('btn');
+        if (s.t >= 100) { b.classList.add('disabled'); b.innerText = "OVERHEAT"; }
+        else { b.classList.remove('disabled'); b.innerText = "ВЗЛОМ"; }
     }
 
     function rs() {
-        const sh = document.getElementById('sh');
+        const sh = document.getElementById('shop');
         sh.innerHTML = '';
-        upgrades.forEach((item, i) => {
+        items.forEach((item, i) => {
             sh.innerHTML += `
-                <div class="card">
-                    <div class="c-info"><h4>${item.n}</h4><p>${item.d} | Цена: ${item.cost.toLocaleString()} ₽</p></div>
-                    <button class="buy" ${s.rub >= item.cost ? '' : 'disabled'} onclick="buy(${i})">BUY</button>
+                <div class="item">
+                    <div><h4>${item.n}</h4><p>${item.d} | Цена: ${item.cost.toLocaleString()} ₽</p></div>
+                    <button class="buy" ${s.rub >= item.cost ? '' : 'disabled'} onclick="buy(${i})">КУПИТЬ</button>
                 </div>`;
         });
     }
 
-    function save() { localStorage.setItem('hackerGameData', JSON.stringify({s, upgrades})); }
-    function load() {
-        const d = localStorage.getItem('hackerGameData');
-        if (d) {
-            const p = JSON.parse(d);
-            s = p.s;
-            p.upgrades.forEach((u, i) => upgrades[i].cost = u.cost);
-        }
-    }
-
     setInterval(() => {
         s.t = Math.max(30, s.t - s.cool);
-        s.rub += s.inc / 10;
+        s.rub += s.inc / 10; // Доход пассивный раз в 100мс, но он теперь меньше сам по себе
         u();
     }, 100);
 
-    load(); rs(); u();
+    rs(); u();
 </script>
 </body>
 </html>
