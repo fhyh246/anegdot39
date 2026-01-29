@@ -1,78 +1,297 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Распределение товаров</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PENTAGON BREAKER: ULTIMATE</title>
     <style>
+        :root {
+            --neon: #00ff41;
+            --dark: #050505;
+            --bg-panel: rgba(0, 20, 0, 0.9);
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-            max-width: 600px;
-            margin: auto;
+            background-color: var(--dark);
+            color: var(--neon);
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            user-select: none;
         }
-        textarea, input[type="text"] {
-            width: 100%;
-            margin-bottom: 10px;
-            padding: 10px;
-            font-size: 14px;
+
+        /* Сканер/Сетка на фоне */
+        body::before {
+            content: " ";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+            z-index: 100;
+            pointer-events: none;
         }
-        textarea {
-            height: 120px;
+
+        .header {
+            padding: 15px;
+            background: #000;
+            border-bottom: 2px solid var(--neon);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        button {
-            width: 100%;
-            padding: 10px;
-            font-size: 16px;
-            margin-top: 10px;
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding: 15px;
+            background: rgba(0, 40, 0, 0.3);
         }
-        #result {
-            margin-top: 20px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            background-color: #f9f9f9;
-            white-space: pre-wrap;
-            overflow-wrap: break-word;
+
+        .stat-item { border-left: 3px solid var(--neon); padding-left: 10px; }
+        .stat-label { font-size: 10px; opacity: 0.7; text-transform: uppercase; }
+        .stat-value { font-size: 18px; font-weight: bold; }
+
+        .main-display {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
         }
-        #error-message {
-            color: red;
-            font-weight: bold;
-            margin-bottom: 10px;
+
+        #hack-zone {
+            width: 180px;
+            height: 180px;
+            border: 2px solid var(--neon);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: inset 0 0 20px var(--neon);
+            transition: 0.1s;
         }
-        #console {
-            margin-top: 20px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            background-color: #f0f0f0;
-            height: 100px;
+
+        #hack-zone:active { transform: scale(0.95); background: rgba(0, 255, 65, 0.2); }
+
+        .upgrade-menu {
+            height: 40vh;
+            background: var(--bg-panel);
+            border-top: 2px solid var(--neon);
             overflow-y: auto;
-            font-family: monospace;
-            white-space: pre-wrap;
+            padding: 10px;
+        }
+
+        .tab-btn {
+            background: none;
+            border: 1px solid var(--neon);
+            color: var(--neon);
+            padding: 8px 15px;
+            margin-right: 5px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .upgrade-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #003300;
+            margin-bottom: 5px;
+        }
+
+        .upgrade-info h4 { margin: 0; font-size: 14px; }
+        .upgrade-info p { margin: 2px 0; font-size: 11px; color: #008800; }
+
+        .buy-btn {
+            background: var(--neon);
+            color: #000;
+            border: none;
+            padding: 8px 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .buy-btn:disabled { background: #003300; color: #006600; cursor: not-allowed; }
+
+        .glitch-active { animation: shake 0.1s linear infinite; }
+        @keyframes shake {
+            0% { transform: translate(1px, 1px); }
+            50% { transform: translate(-2px, -1px); }
+            100% { transform: translate(1px, 1px); }
+        }
+
+        .save-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            font-size: 10px;
+            background: var(--neon);
+            color: #000;
+            padding: 5px;
+            display: none;
         }
     </style>
 </head>
 <body>
-    <h1 style="font-size: 18px;">Распределение товаров по наличному и безналичному расчету</h1>
-    
-    <div id="error-message"></div>
-    
-    <label for="inputList" style="font-size: 14px;">Список товаров:</label>
-    <textarea id="inputList" placeholder="Вставьте сюда список товаров..."></textarea>
-    
-    <label for="cashAmount" style="font-size: 14px;">Сумма для наличных (₽):</label>
-    <input type="text" id="cashAmount">
-    
-    <label for="cardAmount" style="font-size: 14px;">Сумма для безналичных расчетов (₽):</label>
-    <input type="text" id="cardAmount">
-    
-    <button onclick="distribute()">Сформировать</button>
-    
-    <h2 style="font-size: 16px;">Результат распределения</h2>
-    <textarea id="result" readonly></textarea>
-    
-    <h2 style="font-size: 16px;">Консоль</h2>
-    <div id="console"></div>
-    
-    <script src="script.js"></script>
+
+<div class="header">
+    <span>SYSTEM STATUS: RUNNING</span>
+    <button class="tab-btn" onclick="resetGame()" style="border-color: red; color: red; font-size: 10px;">RESET DATA</button>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-item">
+        <div class="stat-label">Currency: BTC</div>
+        <div class="stat-value" id="btc-val">0.000000</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-label">Stolen: DATA</div>
+        <div class="stat-value" id="data-val">0.00 GB</div>
+    </div>
+</div>
+
+<div class="main-display" id="main-display">
+    <div id="hack-zone" onclick="doHack(event)">
+        <span style="font-weight: bold;">HACK</span>
+    </div>
+    <p id="temp-status" style="margin-top: 20px; font-size: 12px;">TEMP: 32°C | FAN: LOW</p>
+</div>
+
+<div class="upgrade-menu">
+    <div style="margin-bottom: 15px;">
+        <button class="tab-btn">HARDWARE</button>
+        <button class="tab-btn">SOFTWARE</button>
+    </div>
+
+    <div id="shop-container"></div>
+</div>
+
+<div id="save-toast" class="save-toast">D_BASE UPDATED...</div>
+
+<script>
+    // Изначальное состояние игры
+    let state = {
+        btc: 0,
+        data: 0,
+        clickPower: 0.00001,
+        autoData: 0,
+        ramMultiplier: 1,
+        upgrades: {
+            gpu: { level: 0, cost: 0.0001, label: 'Video Card (BTC/click)' },
+            ram: { level: 0, cost: 0.0005, label: 'RAM (Critical Hack)' },
+            botnet: { level: 0, cost: 50, label: 'Botnet (Data p/s)' },
+            cooling: { level: 0, cost: 0.001, label: 'Liquid Cooling' }
+        }
+    };
+
+    // Загрузка из LocalStorage
+    function loadGame() {
+        const saved = localStorage.getItem('hackerSimSave');
+        if (saved) {
+            state = JSON.parse(saved);
+            updateUI();
+        }
+    }
+
+    function saveGame() {
+        localStorage.setItem('hackerSimSave', JSON.stringify(state));
+        const toast = document.getElementById('save-toast');
+        toast.style.display = 'block';
+        setTimeout(() => toast.style.display = 'none', 1000);
+    }
+
+    function doHack(e) {
+        let gain = state.clickPower * state.ramMultiplier;
+        state.btc += gain;
+        state.data += (0.1 * state.ramMultiplier);
+
+        if (navigator.vibrate) navigator.vibrate(25);
+        
+        // Визуальный эффект
+        document.getElementById('main-display').classList.add('glitch-active');
+        setTimeout(() => document.getElementById('main-display').classList.remove('glitch-active'), 100);
+
+        updateUI();
+    }
+
+    function buyUpgrade(id) {
+        const up = state.upgrades[id];
+        const isDataCost = id === 'botnet';
+        const currency = isDataCost ? 'data' : 'btc';
+
+        if (state[currency] >= up.cost) {
+            state[currency] -= up.cost;
+            up.level++;
+
+            // Логика улучшений
+            if (id === 'gpu') state.clickPower += 0.00002;
+            if (id === 'ram') state.ramMultiplier += 0.2;
+            if (id === 'botnet') state.autoData += 2;
+            
+            up.cost *= 1.6;
+            renderShop();
+            updateUI();
+            saveGame();
+        }
+    }
+
+    function updateUI() {
+        document.getElementById('btc-val').innerText = state.btc.toFixed(6);
+        document.getElementById('data-val').innerText = state.data.toFixed(2) + " GB";
+    }
+
+    function renderShop() {
+        const container = document.getElementById('shop-container');
+        container.innerHTML = '';
+        
+        for (const [id, up] of Object.entries(state.upgrades)) {
+            const isDataCost = id === 'botnet';
+            const costLabel = isDataCost ? `${up.cost.toFixed(0)} GB` : `${up.cost.toFixed(5)} BTC`;
+            const canBuy = state[isDataCost ? 'data' : 'btc'] >= up.cost;
+
+            container.innerHTML += `
+                <div class="upgrade-card">
+                    <div class="upgrade-info">
+                        <h4>${up.label} [LVL ${up.level}]</h4>
+                        <p>Cost: ${costLabel}</p>
+                    </div>
+                    <button class="buy-btn" ${canBuy ? '' : 'disabled'} onclick="buyUpgrade('${id}')">UPGRADE</button>
+                </div>
+            `;
+        }
+    }
+
+    function resetGame() {
+        if (confirm("ERASE ALL DATA?")) {
+            localStorage.clear();
+            location.reload();
+        }
+    }
+
+    // Циклы игры
+    setInterval(() => {
+        if (state.autoData > 0) {
+            state.data += state.autoData / 10;
+            updateUI();
+        }
+        renderShop(); // Обновляем доступность кнопок
+    }, 100);
+
+    // Автосохранение раз в 30 секунд
+    setInterval(saveGame, 30000);
+
+    // Старт
+    loadGame();
+    renderShop();
+</script>
+
 </body>
 </html>
